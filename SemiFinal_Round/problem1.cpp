@@ -46,4 +46,69 @@ Penny does not like being humiliated by Sheldon but is still confused about what
 
 Solution in C++ :
 
-  
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int maxRides(vector<int>& left, vector<int>& right, int M) {
+    int n = left.size();
+    int m = right.size();
+
+    // Compute prefix sums
+    vector<long long> leftPrefix(n + 1, 0);
+    vector<long long> rightPrefix(m + 1, 0);
+
+    for (int i = 1; i <= n; i++) {
+        leftPrefix[i] = leftPrefix[i - 1] + left[i - 1];
+    }
+    for (int j = 1; j <= m; j++) {
+        rightPrefix[j] = rightPrefix[j - 1] + right[j - 1];
+    }
+
+    // Initialize the maximum number of rides
+    int maxRides = 0;
+    int j = m;
+
+    // Iterate over the left prefix sums
+    for (int i = 0; i <= n; i++) {
+        if (leftPrefix[i] > M) break;
+        while (j > 0 && leftPrefix[i] + rightPrefix[j] > M) {
+            j--;
+        }
+        maxRides = max(maxRides, i + j);
+    }
+
+    return maxRides;
+}
+
+int main() {
+    ios::sync_with_stdio(false); // For faster I/O
+    cin.tie(nullptr); // For faster I/O
+
+    int T;
+    cin >> T;
+
+    while (T--) {
+        int L, R, M;
+        cin >> L;
+        vector<int> left(L);
+        for (int i = 0; i < L; i++) {
+            cin >> left[i];
+        }
+
+        cin >> R;
+        vector<int> right(R);
+        for (int i = 0; i < R; i++) {
+            cin >> right[i];
+        }
+
+        cin >> M;
+
+        cout << maxRides(left, right, M) << endl;
+    }
+
+    return 0;
+}
+
